@@ -1,12 +1,10 @@
 #!/usr/bin/python
 import sys, getopt, os, subprocess
-#from pudb import set_trace
 
 global sourcefolder
 global destfolder
 global finaldicttomove
 global dicttomove
-global listorig
 global listtomove
 global filesplitter
 
@@ -26,10 +24,6 @@ def movefiles(dict):
         
     for key in dict:
         listcommand = ["rsync","-arv",key, dict[key]]
-        #listcommand.append("rsync")
-        #listcommand.append("-arv")
-        #listcommand.append(key)
-        #listcommand.append(dict[key])
         try:
             subprocess.check_call(listcommand)
         except subprocess.CalledProcessError:
@@ -49,9 +43,6 @@ def movefiles(dict):
                delpath = filesplitter+dumdelpath
                print("deleting this folder and its contents: "+delpath) 
                listdelcommand = ["rm","-rf",delpath]
-               #listdelcommand.append("rm")
-               #listdelcommand.append("-rf")
-               #listdelcommand.append(delpath)
                try:
                    subprocess.check_call(listdelcommand)               
                except subprocess.CalledProcessError:
@@ -60,9 +51,6 @@ def movefiles(dict):
             else:
                 print("delete the file: "+str(key))
                 listdelfile = ["rm","-f",key]
-                #listdelfile.append("rm")
-                #listdelfile.append("-f")
-                #listdelfile.append(str(key))
                 try:
                     subprocess.check_call(listdelfile)
                 except subprocess.CalledProcessError:
@@ -138,7 +126,6 @@ def inputloop():
     global destfolder
 
     for k in listtomove:
-        #if key is not a dir
         if os.path.isdir(k):
              for fname in os.listdir(k):
                 if not os.path.isdir(os.path.join(k,fname)) and (fname.endswith('.avi') or fname.endswith('.mpg') or fname.endswith('.vob') or fname.endswith('.mp4') or fname.endswith('.mov') or fname.endswith('.mkv')):
@@ -156,9 +143,6 @@ def inputloop():
             break
         elif(confirm == 'q'):
             sys.exit(2)
-
-
-
 
 def main(argv):
     global sourcefolder
@@ -183,7 +167,6 @@ def main(argv):
     init()
     buildsrcfiles()
     inputloop()
-
 
 if __name__ == "__main__":
     main(sys.argv[1:])
