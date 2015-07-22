@@ -20,8 +20,6 @@ def init():
 
 
 def movefiles(dict):
-
-        
     for key in dict:
         listcommand = ["rsync","-arv",key, dict[key]]
         try:
