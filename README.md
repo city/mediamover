@@ -3,5 +3,5 @@ uses rsync to move movies from the sourcefolder by looking thru all movies up to
 
 Requirements: 
 
-Python3
+Python3,
 rsync
