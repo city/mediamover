@@ -73,6 +73,7 @@ def buildsrcfiles():
                 sourcepath = os.path.join(sourcefolder, fname)
                 dicttomove[sourcepath] = ""
                 listtomove.append(sourcepath)
+                print("adding: "+sourcepath)
     except NameError:
         print('Folder NO GOOD!! USE ABSOLUTE PATHS!: mediamover.py -s <sourcefolder> -d <destfolder>')
         sys.exit(2)
@@ -82,6 +83,7 @@ def addName(src):
     """
     Display old name Prompt User to input new name
     :param src: the source directory path
+    :return: Break out of adding names: True or False
     """
     global dicttomove
     global finaldicttomove
@@ -107,7 +109,8 @@ def addName(src):
     elif(finalName == 'q'):
         sys.exit(2)
     elif(finalName == "xall"):
-        return
+        print("Skipping the rest of the source files ....")
+        return True
     else:
         finalName = finalName+'.'+ext
         i = -1
@@ -115,6 +118,7 @@ def addName(src):
             if(listtomove[p] == src):
                 i = p
         finaldicttomove[src] = os.path.join(destfolder,finalName)
+    return False
 
 def inputloop():
     """
@@ -122,15 +126,20 @@ def inputloop():
     All destination files are <destinationfolder>/filename.ext no folders are allowed in the destination
     """
     global destfolder
-
-    for k in listtomove:
-        if os.path.isdir(k):
-             for fname in os.listdir(k):
-                if not os.path.isdir(os.path.join(k,fname)) and (fname.endswith('.avi') or fname.endswith('.mpg') or fname.endswith('.vob') or fname.endswith('.mp4') or fname.endswith('.mov') or fname.endswith('.mkv')):
-                    addName(os.path.join(k, fname))
-        elif k.endswith('.avi') or k.endswith('.mpg') or k.endswith('.vob') or k.endswith('.mp4') or k.endswith('.mov') or k.endswith('.mkv'):
-            addName(k)
-
+    i = 0
+    done = False
+    while(not done and (i < len(listtomove)-1)):
+        if os.path.isdir(listtomove[i]):
+             for fname in os.listdir(listtomove[i]):
+                if not os.path.isdir(os.path.join(listtomove[i],fname)) and (fname.endswith('.avi') or fname.endswith('.mpg') or fname.endswith('.vob') or fname.endswith('.mp4') or fname.endswith('.mov') or fname.endswith('.mkv')):
+                    if(addName(os.path.join(listtomove[i], fname))):
+                        done = True
+                        break
+        elif listtomove[i].endswith('.avi') or listtomove[i].endswith('.mpg') or listtomove[i].endswith('.vob') or listtomove[i].endswith('.mp4') or listtomove[i].endswith('.mov') or listtomove[i].endswith('.mkv'):
+            if(addName(listtomove[i])):
+                done = True
+                break
+        i += 1
     for k in finaldicttomove:
         print("file: "+k+" is moving to: "+finaldicttomove[k])
 
@@ -162,6 +171,8 @@ def main(argv):
         elif opt in ('-d'):
             destfolder = arg
 
+    print("source folder: "+sourcefolder)
+    print("destination folder: "+destfolder)
     init()
     buildsrcfiles()
     inputloop()
